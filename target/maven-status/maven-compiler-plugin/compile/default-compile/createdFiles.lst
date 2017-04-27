@@ -1,0 +1,10 @@
+de/germeval2017/udeAtGermeval/main/GermevalEvaluator.class
+de/germeval2017/udeAtGermeval/objectBindings/SentimentAspectSet.class
+de/germeval2017/udeAtGermeval/objectBindings/SentimentDocumentSet.class
+de/germeval2017/udeAtGermeval/objectBindings/SentimentDataReader.class
+de/germeval2017/udeAtGermeval/objectBindings/SentimentDocument.class
+de/germeval2017/udeAtGermeval/io/GermevalWriter.class
+de/germeval2017/udeAtGermeval/objectBindings/SentimentAspect.class
+de/germeval2017/udeAtGermeval/io/GermevalReader.class
+de/germeval2017/udeAtGermeval/main/CreateGermevalData.class
+de/germeval2017/udeAtGermeval/main/Evaluate.class
