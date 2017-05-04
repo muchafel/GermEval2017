@@ -6,7 +6,7 @@ import de.germeval2017.Evaluation.io.GermevalReader;
 import de.germeval2017.Evaluation.objectBindings.SentimentDocumentSet;
 
 /**
- * evaluation class
+ * entry point for the evaluation, handles cmd line args, reads the data and configures evaluation
  * @author michael
  *
  */
@@ -56,6 +56,7 @@ public class Evaluate {
 		System.out.println();
 		
 		evaluator.evaluate(predicted,gold,toEvaluate);
+		
 
 	}
 

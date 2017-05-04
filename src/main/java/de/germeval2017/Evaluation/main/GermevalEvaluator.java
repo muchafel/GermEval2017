@@ -12,8 +12,20 @@ import de.germeval2017.Evaluation.objectBindings.SentimentAspect;
 import de.germeval2017.Evaluation.objectBindings.SentimentDocument;
 import de.germeval2017.Evaluation.objectBindings.SentimentDocumentSet;
 
+/**
+ * class that contains the evaluation logic
+ * call evaluate(SentimentDocumentSet predicted, SentimentDocumentSet gold, String toEvaluate) to print an evaluation
+ * @author michael
+ *
+ */
 public class GermevalEvaluator {
 
+	/**
+	 * @param predicted (data)
+	 * @param gold (data)
+	 * @param toEvaluate  specifies which attribute has to be evaluated
+	 * @throws Exception
+	 */
 	public void evaluate(SentimentDocumentSet predicted, SentimentDocumentSet gold, String toEvaluate) throws Exception {
 		
 		Map<String,SentimentDocument> id2Document_predicted= getid2DocumentMap(predicted.getDocs());

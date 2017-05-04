@@ -1,9 +1,7 @@
 package de.germeval2017.Evaluation.io;
 
-import java.awt.FontFormatException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystemException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,6 +17,11 @@ import de.germeval2017.Evaluation.objectBindings.SentimentAspectSet;
 import de.germeval2017.Evaluation.objectBindings.SentimentDocument;
 import de.germeval2017.Evaluation.objectBindings.SentimentDocumentSet;
 
+/**
+ * reader class for both xml and tsv files
+ * @author michael
+ *
+ */
 public class GermevalReader {
 
 	public SentimentDocumentSet read(File file) throws Exception {
@@ -33,6 +36,12 @@ public class GermevalReader {
 		
 	}
 
+	/**
+	 * reads xmls using java object bindings (the corresponding objects are in the object bindings package)
+	 * @param file
+	 * @return SentimentDocumentSet
+	 * @throws JAXBException
+	 */
 	private SentimentDocumentSet readXML(File file) throws JAXBException {
 		JAXBContext jc = JAXBContext.newInstance(SentimentDocumentSet.class);
 
@@ -41,13 +50,18 @@ public class GermevalReader {
 		return documentSet;
 	}
 
+	/**
+	 * reads TSV using FileUtils
+	 * @param file
+	 * @return SentimentDocumentSet
+	 * @throws JAXBException
+	 */
 	private SentimentDocumentSet readTSV(File file) throws IOException {
 		SentimentDocumentSet result = new SentimentDocumentSet();
 		List<SentimentDocument> docs = new ArrayList<SentimentDocument>();
 		result.setDocs(docs);
 		int i=0;
 		for(String line: FileUtils.readLines(file)){
-//			System.out.println(line);
 			if(line.equals("SOURCE"+"\t"+"TEXT"+"\t"+"RELEVANCE"+"\t"+"SENTIMENT"+"\t"+"CATEGORY:SENTIMENT"+"\t")){
 				continue;
 			}
