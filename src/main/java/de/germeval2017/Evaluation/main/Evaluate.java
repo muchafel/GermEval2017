@@ -42,7 +42,7 @@ public class Evaluate {
 		}
 		
 		if((goldFile.getName().endsWith("tsv")||predictionFile.getName().endsWith("tsv"))&&toEvaluate.equals("OTE")){
-			throw new Exception("If you wnat to evaluate OTEs please rely on xml for both files");
+			throw new Exception("If you want to evaluate OTEs please rely on xml for both files");
 		}
 		
 		GermevalReader reader= new GermevalReader();

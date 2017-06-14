@@ -86,9 +86,9 @@ public class GermevalReader {
 		for(String part: aspectString.split(" ")){
 			SentimentAspect aspect= new SentimentAspect();
 			aspect.setAspect(part.split(":")[0]);
-			aspect.setAspect(part.split(":")[1]);
+			aspect.setSentiment(part.split(":")[1]);
+			result.add(aspect);
 		}
-		
 		return result;
 	}
 
