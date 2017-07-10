@@ -90,8 +90,8 @@ public class GermevalEvaluator {
 
 		System.out.println("Evaluation Results for exact OTE matching (based on " + matcherExact.getOte_pairs().size() + " instances):");
 		printEvaluation(matcherExact.getOte_pairs());
-		System.out.println("Evaluation Results for OTE with overlapping (based on " + ote_exact.size() + " instances):");
-		printEvaluation(ote_overlap);
+		System.out.println("Evaluation Results for OTE with overlapping (based on " + matcherOverlap.getOte_pairs().size() + " instances):");
+		printEvaluation(matcherOverlap.getOte_pairs());
 
 	}
 
