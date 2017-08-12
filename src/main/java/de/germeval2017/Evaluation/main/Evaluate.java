@@ -57,8 +57,6 @@ public class Evaluate {
 		
 		evaluator.evaluate(predicted,gold,toEvaluate);
 		
-
 	}
-
 
 }

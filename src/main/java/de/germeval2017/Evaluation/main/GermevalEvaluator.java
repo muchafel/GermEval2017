@@ -155,6 +155,7 @@ public class GermevalEvaluator {
 			List<SentimentAspect> aspects_gold, List<SentimentAspect> aspects_predicted) {
 		Set<String> aspectSet_gold = getAspectSentimentSet(aspects_gold);
 		Set<String> aspectSet_predicted = getAspectSentimentSet(aspects_predicted);
+		System.out.println(aspectSet_gold);
 		for (String aspect : aspectSet_gold) {
 			if (aspectSet_predicted.contains(aspect)) {
 				aspectSentimentOccurrence.register(aspect, aspect);
@@ -174,7 +175,7 @@ public class GermevalEvaluator {
 	private Set<String> getAspectSentimentSet(List<SentimentAspect> aspects) {
 		Set<String> result = new HashSet<>();
 		for (SentimentAspect aspect : aspects) {
-			result.add(aspect.getAspect() + "_" + aspect.getSentiment());
+			result.add(aspect.getAspect().split("#")[0] + "_" + aspect.getSentiment());
 		}
 		return result;
 	}
