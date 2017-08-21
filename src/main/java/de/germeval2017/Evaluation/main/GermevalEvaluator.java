@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.germeval2017.Evaluation.EvaluationUtil.ConfusionMatrix;
 import de.germeval2017.Evaluation.EvaluationUtil.EvaluationData;
 import de.germeval2017.Evaluation.EvaluationUtil.Fscore;
 import de.germeval2017.Evaluation.EvaluationUtil.OTEMatcher;
@@ -33,27 +34,34 @@ public class GermevalEvaluator {
 	 *            specifies which attribute has to be evaluated
 	 * @throws Exception
 	 */
-	public void evaluate(SentimentDocumentSet predicted, SentimentDocumentSet gold, String toEvaluate)
+	public EvaluationData evaluate(SentimentDocumentSet predicted, SentimentDocumentSet gold, String toEvaluate)
 			throws Exception {
 
 		Map<String, SentimentDocument> id2Document_predicted = getid2DocumentMap(predicted.getDocs());
 		Map<String, SentimentDocument> id2Document_gold = getid2DocumentMap(gold.getDocs());
 
 		if (toEvaluate.equals("relevance")) {
-			evaluateRelevance(id2Document_predicted, id2Document_gold);
+			return evaluateRelevance(id2Document_predicted, id2Document_gold);
 		} else if (toEvaluate.equals("sentiment")) {
-			evaluateSentiment(id2Document_predicted, id2Document_gold);
+			return evaluateSentiment(id2Document_predicted, id2Document_gold);
 		} else if (toEvaluate.equals("category")) {
-			evaluateCategory(id2Document_predicted, id2Document_gold);
+			return evaluateCategory(id2Document_predicted, id2Document_gold);
 		} else if (toEvaluate.equals("OTE")) {
-			evaluateOTE(id2Document_predicted, id2Document_gold);
+			return evaluateOTE(id2Document_predicted, id2Document_gold);
 		} else {
 			throw new Exception("use relevance, sentiment, category or OTE as an evaluation option");
 		}
 
 	}
 
-	private void evaluateOTE(Map<String, SentimentDocument> id2Document_predicted,
+	/**
+	 * currently only exact matching is returned
+	 * @param id2Document_predicted
+	 * @param id2Document_gold
+	 * @return
+	 * @throws Exception
+	 */
+	private EvaluationData<String> evaluateOTE(Map<String, SentimentDocument> id2Document_predicted,
 			Map<String, SentimentDocument> id2Document_gold) throws Exception {
 		EvaluationData<String> ote_exact = new EvaluationData<>();
 		EvaluationData<String> ote_overlap = new EvaluationData<>();
@@ -64,7 +72,13 @@ public class GermevalEvaluator {
 		for (String id : id2Document_gold.keySet()) {
 			SentimentDocument doc_gold = id2Document_gold.get(id);
 			if (!id2Document_predicted.containsKey(id)) {
-				throw new Exception("Document " + id + " exists in gold data but not in prediction");
+				if (doc_gold.getAspects() != null && doc_gold.getAspects().getAspects() != null) {
+					for (SentimentAspect aspect : doc_gold.getAspects().getAspects()) {
+						matcherExact.registerOTE_Missmatch(doc_gold.getAspects().getAspects(), "none");
+						matcherOverlap.registerOTE_Missmatch(doc_gold.getAspects().getAspects(), "missmatch");
+					}
+				}
+//				throw new Exception("Document " + id + " exists in gold data but not in prediction");
 			}
 			SentimentDocument doc_predicted = id2Document_predicted.get(id);
 
@@ -82,12 +96,12 @@ public class GermevalEvaluator {
 					matcherOverlap.registerOTE_Missmatch(doc_gold.getAspects().getAspects(), "missmatch");
 				}
 				// in case there are no gold but predicted aspects
-			} else if (doc_predicted.getAspects() != null && doc_predicted.getAspects().getAspects() != null) {
+			}else if (doc_predicted.getAspects() != null && doc_predicted.getAspects().getAspects() != null & doc_gold.getAspects() != null && doc_gold.getAspects().getAspects() != null) {
 				matcherExact.registerOTE_Missmatch("none", doc_gold.getAspects().getAspects());
 				matcherOverlap.registerOTE_Missmatch("missmatch", doc_gold.getAspects().getAspects());
 			}
 		}
-
+//		System.out.println(new ConfusionMatrix<>(matcherExact.getOte_pairs()));
 		System.out.println("Evaluation Results for exact OTE matching (based on " + matcherExact.getOte_pairs().size()
 				+ " instances):");
 		printEvaluation(matcherExact.getOte_pairs());
@@ -95,9 +109,17 @@ public class GermevalEvaluator {
 				+ matcherOverlap.getOte_pairs().size() + " instances):");
 		printEvaluation(matcherOverlap.getOte_pairs());
 
+		return matcherExact.getOte_pairs();
 	}
 
-	private void evaluateCategory(Map<String, SentimentDocument> id2Document_predicted,
+	/**
+	 * currently only category is returned
+	 * @param id2Document_predicted
+	 * @param id2Document_gold
+	 * @return
+	 * @throws Exception
+	 */
+	private EvaluationData<String> evaluateCategory(Map<String, SentimentDocument> id2Document_predicted,
 			Map<String, SentimentDocument> id2Document_gold) throws Exception {
 		EvaluationData<String> aspectOccurrence = new EvaluationData<>();
 		EvaluationData<String> aspectOccurrence_Sentiment = new EvaluationData<>();
@@ -105,20 +127,29 @@ public class GermevalEvaluator {
 		for (String id : id2Document_gold.keySet()) {
 			SentimentDocument doc_gold = id2Document_gold.get(id);
 			if (!id2Document_predicted.containsKey(id)) {
-				throw new Exception("Document " + id + " exists in gold data but not in prediction");
-			}
-			SentimentDocument doc_predicted = id2Document_predicted.get(id);
-			if (doc_gold.getAspects() != null && doc_gold.getAspects().getAspects() != null) {
-				if (doc_predicted.getAspects() != null && doc_predicted.getAspects().getAspects() != null) {
-					aspectOccurrence = registerAspectOccurences(aspectOccurrence, doc_gold.getAspects().getAspects(),
-							doc_predicted.getAspects().getAspects());
-					aspectOccurrence_Sentiment = registerAspectSentimentOccurences(aspectOccurrence_Sentiment,
-							doc_gold.getAspects().getAspects(), doc_predicted.getAspects().getAspects());
-				} else {
-					aspectOccurrence = registerAspectOccurences(aspectOccurrence, doc_gold.getAspects().getAspects(),
-							"none");
-					aspectOccurrence_Sentiment = registerAspectSentimentOccurences(aspectOccurrence_Sentiment,
-							doc_gold.getAspects().getAspects(), "none");
+				if (doc_gold.getAspects() != null && doc_gold.getAspects().getAspects() != null) {
+					for(SentimentAspect aspect:doc_gold.getAspects().getAspects()){
+						aspectOccurrence = registerAspectOccurences(aspectOccurrence, doc_gold.getAspects().getAspects(),
+								"none");
+						aspectOccurrence_Sentiment = registerAspectSentimentOccurences(aspectOccurrence_Sentiment,
+								doc_gold.getAspects().getAspects(), "none");
+					}
+				}
+//				throw new Exception("Document " + id + " exists in gold data but not in prediction");
+			}else{
+				SentimentDocument doc_predicted = id2Document_predicted.get(id);
+				if (doc_gold.getAspects() != null && doc_gold.getAspects().getAspects() != null) {
+					if (doc_predicted.getAspects() != null && doc_predicted.getAspects().getAspects() != null) {
+						aspectOccurrence = registerAspectOccurences(aspectOccurrence, doc_gold.getAspects().getAspects(),
+								doc_predicted.getAspects().getAspects());
+						aspectOccurrence_Sentiment = registerAspectSentimentOccurences(aspectOccurrence_Sentiment,
+								doc_gold.getAspects().getAspects(), doc_predicted.getAspects().getAspects());
+					} else {
+						aspectOccurrence = registerAspectOccurences(aspectOccurrence, doc_gold.getAspects().getAspects(),
+								"none");
+						aspectOccurrence_Sentiment = registerAspectSentimentOccurences(aspectOccurrence_Sentiment,
+								doc_gold.getAspects().getAspects(), "none");
+					}
 				}
 			}
 		}
@@ -129,7 +160,8 @@ public class GermevalEvaluator {
 		System.out.println("Evaluation Results for Categories + Sentiment (based on "
 				+ aspectOccurrence_Sentiment.size() + " instances):");
 		printEvaluation(aspectOccurrence_Sentiment);
-
+		return aspectOccurrence;
+		//return aspectaspectOccurrence_Sentiment
 	}
 
 	private EvaluationData<String> registerAspectSentimentOccurences(EvaluationData<String> spectSentimentOccurrence,
@@ -155,7 +187,7 @@ public class GermevalEvaluator {
 			List<SentimentAspect> aspects_gold, List<SentimentAspect> aspects_predicted) {
 		Set<String> aspectSet_gold = getAspectSentimentSet(aspects_gold);
 		Set<String> aspectSet_predicted = getAspectSentimentSet(aspects_predicted);
-		System.out.println(aspectSet_gold);
+//		System.out.println(aspectSet_gold);
 		for (String aspect : aspectSet_gold) {
 			if (aspectSet_predicted.contains(aspect)) {
 				aspectSentimentOccurrence.register(aspect, aspect);
@@ -216,40 +248,43 @@ public class GermevalEvaluator {
 		System.out.println("MICRO_F1 " + fscore.getMicroFscore());
 	}
 
-	private void evaluateSentiment(Map<String, SentimentDocument> id2Document_predicted,
+	private EvaluationData<String> evaluateSentiment(Map<String, SentimentDocument> id2Document_predicted,
 			Map<String, SentimentDocument> id2Document_gold) throws Exception {
 		EvaluationData<String> evaluationData = new EvaluationData<>();
 
 		for (String id : id2Document_gold.keySet()) {
 			SentimentDocument doc_gold = id2Document_gold.get(id);
 			if (!id2Document_predicted.containsKey(id)) {
-				throw new Exception("Document " + id + " exists in gold data but not in prediction");
+				evaluationData.register(doc_gold.getSentiment(), "nothing");
+			}else{
+				SentimentDocument doc_predicted = id2Document_predicted.get(id);
+				evaluationData.register(doc_gold.getSentiment(), doc_predicted.getSentiment());
 			}
-			SentimentDocument doc_predicted = id2Document_predicted.get(id);
-			evaluationData.register(doc_gold.getSentiment(), doc_predicted.getSentiment());
 		}
 
-		System.out.println("Evaluation Results for Sentiment (based on " + evaluationData.size() + " instances):");
-		printEvaluation(evaluationData);
-
+//		System.out.println("Evaluation Results for Sentiment (based on " + evaluationData.size() + " instances):");
+//		printEvaluation(evaluationData);
+		return evaluationData;
 	}
 
 	private EvaluationData evaluateRelevance(Map<String, SentimentDocument> id2Document_predicted,
 			Map<String, SentimentDocument> id2Document_gold) throws Exception {
-		EvaluationData<Boolean> evaluationData = new EvaluationData<>();
+		EvaluationData<String> evaluationData = new EvaluationData<>();
 
 		for (String id : id2Document_gold.keySet()) {
 			SentimentDocument doc_gold = id2Document_gold.get(id);
 			if (!id2Document_predicted.containsKey(id)) {
-				throw new Exception("Document " + id + " exists in gold data but not in prediction");
+				evaluationData.register(String.valueOf(doc_gold.isRelevance()), "not there");
+//				throw new Exception("Document " + id + " exists in gold data but not in prediction");
+			}else{
+				SentimentDocument doc_predicted = id2Document_predicted.get(id);
+				evaluationData.register(String.valueOf(doc_gold.isRelevance()), String.valueOf(doc_predicted.isRelevance()));
 			}
-			SentimentDocument doc_predicted = id2Document_predicted.get(id);
-			evaluationData.register(doc_gold.isRelevance(), doc_predicted.isRelevance());
 		}
 
-		System.out.println("Evaluation Results for Relevance (based on " + evaluationData.size() + " instances):");
-		Fscore<Boolean> fscore = new Fscore<>(evaluationData);
-		System.out.println("MICRO_F1 " + fscore.getMicroFscore());
+//		System.out.println("Evaluation Results for Relevance (based on " + evaluationData.size() + " instances):");
+		Fscore<String> fscore = new Fscore<>(evaluationData);
+//		System.out.println("MICRO_F1 " + fscore.getMicroFscore());
 
 		return evaluationData;
 	}

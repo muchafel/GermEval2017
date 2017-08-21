@@ -49,11 +49,39 @@ public class OTEMatcher {
 	 */
 	private SentimentAspect getExactMatch(SentimentAspect aspect, List<SentimentAspect> aspects_predicted, List<SentimentAspect> processedPredictedAspects) {
 		for (SentimentAspect aspect_predcited : aspects_predicted) {
-			if (aspect.getEnd() == aspect_predcited.getEnd() && aspect.getBegin() == aspect_predcited.getBegin()&& aspect.getAspect().equals(aspect_predcited.getAspect()) && !processedPredictedAspects.contains(aspect_predcited) ) {
+			if (matchEnd(aspect,aspect_predcited) && matchBegin(aspect,aspect_predcited)&& getCategory(aspect.getAspect()).equals(aspect_predcited.getAspect()) && !processedPredictedAspects.contains(aspect_predcited) ) {
 				return aspect_predcited;
 			}
 		}
 		return null;
+	}
+
+
+/**
+ * debugging point
+ * @param aspect
+ * @param aspect_predcited
+ * @return
+ */
+	private boolean matchBegin(SentimentAspect aspect, SentimentAspect aspect_predcited) {
+		if(aspect.getBegin()==aspect_predcited.getBegin()){
+			return true;
+		}
+		return false;
+	}
+
+
+	/**
+	 * debugging point
+	 * @param aspect
+	 * @param aspect_predcited
+	 * @return
+	 */
+	private boolean matchEnd(SentimentAspect aspect, SentimentAspect aspect_predcited) {
+		if(aspect.getEnd()==aspect_predcited.getEnd()){
+			return true;
+		}
+		return false;
 	}
 
 
@@ -77,18 +105,32 @@ public class OTEMatcher {
 		for (SentimentAspect aspect : aspects_gold) {
 			SentimentAspect matching = overlapMatch(aspect, aspects_predicted, docText,processedPredictedAspects);
 			if (matching != null) {
-				ote_pairs.register(aspect.getAspect(), aspect.getAspect());
+				ote_pairs.register(getCategory(aspect.getAspect()), getCategory(aspect.getAspect()));
 				processedPredictedAspects.add(matching);
 			} else {
-				ote_pairs.register(aspect.getAspect(), "none");
+				ote_pairs.register(getCategory(aspect.getAspect()), "none");
 			}
 		}
 		for (SentimentAspect aspect : getRemainingList(aspects_predicted, processedPredictedAspects)) {
-			ote_pairs.register("none", aspect.getAspect());
+			ote_pairs.register("none", getCategory(aspect.getAspect()));
 		}
 
 	}
 	
+	/**
+	 * TODO: refactor this into value container
+	 * @param aspect
+	 * @return
+	 */
+	private String getCategory(String aspect) {
+		if(aspect.contains("#")){
+			return aspect.split("#")[0];
+		}
+		return aspect;
+	}
+
+
+
 	private SentimentAspect overlapMatch(SentimentAspect aspect, List<SentimentAspect> aspects_predicted,
 			String docText, List<SentimentAspect> processedPredictedAspects) {
 		
@@ -100,7 +142,7 @@ public class OTEMatcher {
 		
 		for (SentimentAspect aspect_predcited : aspects_predicted) {
 			if (betweenBounds(aspect_predcited, aspect,lowerBound_min,lowerBound_max,upperBound_min,upperBound_max)
-					&& aspect.getAspect().equals(aspect_predcited.getAspect())
+					&& getCategory(aspect.getAspect()).equals(getCategory(aspect_predcited.getAspect()))
 					&&! processedPredictedAspects.contains(aspect_predcited)) {
 				return aspect_predcited;
 			}
@@ -152,14 +194,14 @@ public class OTEMatcher {
 
 	public void registerOTE_Missmatch(String notThere, List<SentimentAspect> aspects) {
 		for (SentimentAspect aspect : aspects) {
-			ote_pairs.register(notThere,aspect.getAspect());
+			ote_pairs.register(notThere,getCategory(aspect.getAspect()));
 		}
 	}
 	
 	public void registerOTE_Missmatch(List<SentimentAspect> aspects,
 			String notThere) {
 		for (SentimentAspect aspect : aspects) {
-			ote_pairs.register(aspect.getAspect(), notThere);
+			ote_pairs.register(getCategory(aspect.getAspect()), notThere);
 		}
 	}
 
