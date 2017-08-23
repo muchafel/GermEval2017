@@ -16,14 +16,14 @@ __License__
 This work is licensed under Attribution-NonCommercial 2.0 Generic license (CC BY-NC 2.0)
 (https://creativecommons.org/licenses/by-nc/2.0/)
 
-You are free to:
+_You are free to:_
 
-Share — copy and redistribute the material in any medium or format
+* Share — copy and redistribute the material in any medium or format
 
-Adapt — remix, transform, and build upon the material
+* Adapt — remix, transform, and build upon the material
 
-Under the following terms:
+_Under the following terms:_
 
-Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+* Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
 
-NonCommercial — You may not use the material for commercial purposes.
+* NonCommercial — You may not use the material for commercial purposes.
