@@ -12,5 +12,18 @@ __How to compile?__
 Although the script is built in java and therefore platform independent, you may want to build your own executable jar from the sources. This can be done with maven ("mvn clean install"). If you want to change java compatibility of the jar, alter the version specified in the maven compiler plugin to your preferred java version. The sources have been tested for java 7 and 8 (we use 7 in the current version).
 
 __License__
+
 This work is licensed under Attribution-NonCommercial 2.0 Generic license (CC BY-NC 2.0)
 (https://creativecommons.org/licenses/by-nc/2.0/)
+
+You are free to:
+
+Share — copy and redistribute the material in any medium or format
+
+Adapt — remix, transform, and build upon the material
+
+Under the following terms:
+
+Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+
+NonCommercial — You may not use the material for commercial purposes.
