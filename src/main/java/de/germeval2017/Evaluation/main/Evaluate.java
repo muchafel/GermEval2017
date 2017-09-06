@@ -18,6 +18,7 @@ public class Evaluate {
 		File goldFile = null;
 		String toEvaluate = null;
 		if(args.length!=3){
+			System.out.println(args.length);
 			throw new Exception("Please use the right number of args. 1. what you want to evaluate (relevance, sentiment, category or OTE) 2. prediction file 3. gold file");
 		}
 		

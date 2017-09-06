@@ -49,7 +49,9 @@ public class OTEMatcher {
 	 */
 	private SentimentAspect getExactMatch(SentimentAspect aspect, List<SentimentAspect> aspects_predicted, List<SentimentAspect> processedPredictedAspects) {
 		for (SentimentAspect aspect_predcited : aspects_predicted) {
-			if (matchEnd(aspect,aspect_predcited) && matchBegin(aspect,aspect_predcited)&& getCategory(aspect.getAspect()).equals(aspect_predcited.getAspect()) && !processedPredictedAspects.contains(aspect_predcited) ) {
+//			System.out.println("OTE predicted: '"+aspect_predcited.getOte()+"' ("+aspect_predcited.getAspect()+")" +" - '"+aspect.getOte()+"' ("+aspect.getAspect()+")");
+//			System.out.println(aspect_predcited.getBegin()+" to "+aspect_predcited.getEnd()+" vs. "+aspect.getBegin()+" to "+aspect.getEnd());
+			if (matchEnd(aspect,aspect_predcited) && matchBegin(aspect,aspect_predcited)&& getCategory(aspect.getAspect()).equals(getCategory(aspect_predcited.getAspect())) && !processedPredictedAspects.contains(aspect_predcited) ) {
 				return aspect_predcited;
 			}
 		}

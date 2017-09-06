@@ -71,6 +71,7 @@ public class GermevalReader {
 			aspectSet.setAspects(aspects);
 			doc.setAspects(aspectSet);
 			String[] lineParts= line.split("\t");
+//			System.out.println(line);
 			doc=setUpDoc(doc, lineParts[0],lineParts[1],lineParts[2],lineParts[3]);
 			if(lineParts.length>4){
 				aspects.addAll(getAspects(lineParts[4]));
@@ -86,7 +87,9 @@ public class GermevalReader {
 		for(String part: aspectString.split(" ")){
 			SentimentAspect aspect= new SentimentAspect();
 			aspect.setAspect(part.split(":")[0]);
-			aspect.setSentiment(part.split(":")[1]);
+			if(part.split(":").length > 1){
+				aspect.setSentiment(part.split(":")[1]);
+			}
 			result.add(aspect);
 		}
 		return result;
