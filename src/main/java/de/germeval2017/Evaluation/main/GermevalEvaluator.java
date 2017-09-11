@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.germeval2017.Evaluation.EvaluationUtil.ConfusionMatrix;
 import de.germeval2017.Evaluation.EvaluationUtil.EvaluationData;
 import de.germeval2017.Evaluation.EvaluationUtil.Fscore;
 import de.germeval2017.Evaluation.EvaluationUtil.OTEMatcher;
