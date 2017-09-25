@@ -261,8 +261,8 @@ public class GermevalEvaluator {
 			}
 		}
 
-//		System.out.println("Evaluation Results for Sentiment (based on " + evaluationData.size() + " instances):");
-//		printEvaluation(evaluationData);
+		System.out.println("Evaluation Results for Sentiment (based on " + evaluationData.size() + " instances):");
+		printEvaluation(evaluationData);
 		return evaluationData;
 	}
 
@@ -281,9 +281,9 @@ public class GermevalEvaluator {
 			}
 		}
 
-//		System.out.println("Evaluation Results for Relevance (based on " + evaluationData.size() + " instances):");
+		System.out.println("Evaluation Results for Relevance (based on " + evaluationData.size() + " instances):");
 		Fscore<String> fscore = new Fscore<>(evaluationData);
-//		System.out.println("MICRO_F1 " + fscore.getMicroFscore());
+		System.out.println("MICRO_F1 " + fscore.getMicroFscore());
 
 		return evaluationData;
 	}
